@@ -126,9 +126,10 @@ def get_map(
     try:
         map_link = link["result"][0]["map_url"]
         response = download(map_link)
+        _LOGGER.debug(f"Raw map API response: {response.text}")  # Add this line
     except Exception as e:
-        _LOGGER.error("Encountered an error, please include the following data in your github issue: " + str(base64.b64encode(json.dumps(link).encode())))
-        raise e
+        _LOGGER.error("Error downloading map. Full link data: %s", link)
+        raise ValueError("No map data in API response") from e
 
     if response.status_code != 200:
         _LOGGER.warning("Got " + str(response.status_code) + " from server while downloading map.")
